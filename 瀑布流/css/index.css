@@ -1,0 +1,15 @@
+.img-wrap {
+  width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+.img-wrap .img-item{
+  position: absolute;
+  width: 292.5px;
+  overflow: hidden;
+  background-color: #ededed;
+}
+.img-wrap .image{
+  width: 100%;
+  display: block;
+}

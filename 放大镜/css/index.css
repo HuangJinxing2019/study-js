@@ -1,0 +1,29 @@
+.mag-warp{
+  position: relative;
+  height: 500px;
+  margin: 100px;
+  font-size: 0;
+}
+.mag-warp .wrap-img{
+ height: 100%;
+}
+.mag-warp .mag{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 120px;
+  height: 120px;
+  box-shadow: 0 0 8px #ddd;
+  overflow: hidden;
+  transform: scale(1.5);
+}
+.mag-warp .mag-img{
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 500px;
+}
+.mag-warp .mag.show{
+  display: block;
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- postmeaaage + iframe -->
+
+  <iframe src="http://127.0.0.1:5501/index2.html" frameborder="1"></iframe>
+
+  <!-- hash + iframe -->
+  <!-- <iframe src="http://127.0.0.1:5501/index2.html#hhhh" frameborder="1"></iframe> -->
+  <!-- <button class="btn">获取数据</button> -->
+  <script>
+    /*******************postmeaaage + iframe***************************/
+    window.onmessage = function(data){
+      console.log(data.data)
+    }
+    /******************window.domain + iframe****************************/
+    // document.domain = '127.0.0.1'
+    // var iframe = document.createElement('iframe');
+    // iframe.src = 'http://127.0.0.1:5501/index2.html'
+    // iframe.onload = function() {
+    //   console.log(iframe.contentWindow.getData())
+    // }
+    // document.body.appendChild(iframe)
+
+
+    /******************window.name + iframe****************************/
+    // var iframe = document.createElement('iframe');
+    // iframe.src = 'http://127.0.0.1:5501/index2.html'
+    // var flag = false;
+
+    // function getDatas(){
+    //   if(flag){
+    //     console.log(iframe.contentWindow.name)
+    //   }else{
+    //     flag = true
+    //     setTimeout(function(){
+    //       iframe.contentWindow.location = 'index3.html'
+    //     }, 1000)
+    //   }
+    // } 
+    // iframe.addEventListener('load', getDatas, false)
+    // document.body.appendChild(iframe)
+
+    /**************************hash + iframe****************************************/
+    // var btn = document.getElementsByClassName('btn')[0];
+    // btn.addEventListener('click', getDatas, false);
+    // function getDatas(){
+    //   console.log(decodeURI(location.hash.substring(1)))
+    // }
+  </script>
+</body>
+</html>
