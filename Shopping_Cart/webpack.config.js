@@ -1,9 +1,6 @@
 const path = require("path"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
-  TerserPlugin = require("terser-webpack-plugin"),
-  // cleanWebpackPlugin = require('clean-webpack-plugin'),
-  webpack = require('webpack');
-
+  TerserPlugin = require("terser-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: {
@@ -12,6 +9,11 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "js/[name]-[hash:6].js",
+    clean: {
+      keep(asset){
+        return asset.startsWith('scripts') || asset.startsWith('fonts') || asset.startsWith('css')
+      }
+    },
   },
   module: {
     rules: [
@@ -46,6 +48,13 @@ module.exports = {
         ],
       },
       {
+        test: /\.tpl$/,
+        loader: "ejs-loader",
+        options: {
+          esModule: false,
+        }
+      },
+      {
         test: /\.(png|jpg|gif|ico)$/i,
         type: "asset",
         parser: {
@@ -53,26 +62,29 @@ module.exports = {
             maxSize: 8 * 1024,
           },
         },
-      },
-      {
-        test: /\.html$/i,
-        loader: "html-loader",
+        generator: {
+          filename: 'images/[hash][ext][query]'
+        }
       },
     ],
   },
   devServer: {
-    // watchOptions: {
-    //   ignored: /node_modules/,
-    // },
+    watchOptions: {
+      ignored: /node_modules/,
+    },
     port: 8088,
     host: "localhost",
     hot: true,
   },
   plugins: [
-    // new cleanWebpackPlugin({
-    //   cleanOnceBeforeBuildPatterns: ['dist/js', 'dist/*.html']
-    // }),
-    // new TerserPlugin(),
+    new TerserPlugin({
+      terserOptions: {
+        format: {
+          comments: false,
+        },
+      },
+      extractComments: false,
+    }),
     new HtmlWebpackPlugin({
       // minify: {
       //   collapseWhitespace: true, //去除回车和空格
@@ -80,7 +92,7 @@ module.exports = {
       // },
       title: "商品列表",
       filename: "index.html",
-      template: path.resolve(__dirname, "src/index.html"),
+      template: path.resolve(__dirname, "src/index.html")
     }),
   ],
 };
