@@ -1,0 +1,23 @@
+*{
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: #333;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: normal;
+}
+.container{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: .14rem;
+}
+img {
+  width: 100%;
+}
