@@ -5,18 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server",
-    "build": "webpack"
+    "dev": "webpack-dev-server --hot --config webpack.config.js --progress",
+    "build": "webpack --config webpack.config.js --progress"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "browserslist": "> 0.25%, not dead",
   "devDependencies": {
     "@babel/core": "^7.21.3",
     "@babel/preset-env": "^7.20.2",
     "babel-loader": "^9.1.2",
-    "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.7.3",
     "ejs": "^3.1.9",
     "ejs-loader": "^0.5.0",

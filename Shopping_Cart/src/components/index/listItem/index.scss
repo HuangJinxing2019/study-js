@@ -1,0 +1,35 @@
+.list_item{
+  width: 50%;
+  padding: .05rem;
+  box-sizing: border-box;
+  .item_lk {
+    display: block;
+    width: 100%;
+    padding: .05rem .05rem 0;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: .06rem;
+    .goods_pic {
+      width: 100%;
+      height: 1.3rem;
+      img{
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .goods_title{
+      height: .3rem;
+      line-height: .15rem;
+      margin-top: .05rem;
+      overflow: hidden;
+      font-weight: bold;
+    }
+    .goods_price{
+      height: .25rem;
+      line-height: .25rem;
+      font-size: .14rem;
+      color: #f40;
+    }
+  }
+}

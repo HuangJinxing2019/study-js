@@ -26,8 +26,10 @@ module.exports = {
             loader: "postcss-loader",
             options: {
               postcssOptions: {
-                plugins: ["postcss-preset-env"],
-              },
+                plugins: [
+                  ['postcss-preset-env', { browsers: 'last 20 versions' }]
+                ]
+              }
             },
           },
           "sass-loader",
@@ -69,12 +71,11 @@ module.exports = {
     ],
   },
   devServer: {
-    watchOptions: {
-      ignored: /node_modules/,
-    },
+    watchFiles: ['scr/**'],
     port: 8088,
     host: "localhost",
     hot: true,
+    static: ['./dist'],
   },
   plugins: [
     new TerserPlugin({
