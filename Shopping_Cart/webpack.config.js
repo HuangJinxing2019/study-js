@@ -113,7 +113,7 @@ module.exports = {
         collapseWhitespace: false, //去除回车和空格
         removeComments: true, // 删除注释
       },
-      title: "商品详情",
+      title: "购物车",
       filename: "cart.html",
       template: path.resolve(__dirname, "src/cart.html"),
       chunks: ['cart'],
