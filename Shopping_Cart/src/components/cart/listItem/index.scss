@@ -1,0 +1,62 @@
+.list_item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-radius: .1rem;
+  padding-left: .15rem;
+  padding-right: .1rem;
+  box-sizing: border-box;
+  background: #fff;
+  margin-bottom: .1rem;
+  .check{
+    width: .3rem;
+  }
+  .goods_info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    .pic{
+      width: .88rem;
+      height: .78rem;
+      img{
+        height: 100%;
+      }
+    }
+    .content{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      height: .88rem;
+      padding: .1rem;
+      box-sizing: border-box;
+      .title{
+        height: .3rem;
+        line-height: .15rem;
+        overflow: hidden;
+      }
+      .info{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .price {
+          color: #f40;
+        }
+      }
+    }
+  }
+  .remove_box{
+    display: none;
+    width: .4rem;
+    text-align: center;
+    &.show{
+      display: block;
+    }
+    .fa{
+      font-size: .2rem;
+      color: #f40;
+    }
+  }
+}

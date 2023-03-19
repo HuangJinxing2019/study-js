@@ -9,7 +9,7 @@ const App = (doc) => {
   const oContainer = doc.getElementsByClassName('J_container')[0];
   const oList = doc.getElementsByClassName('J_list')[0];
   const init = () => {
-    oContainer.appendChild(header.tpl('商品列表'))
+    oContainer.appendChild(header.tpl({title: '商品详情'}))
     getGoodsList()
   }
   const getGoodsList = () => {

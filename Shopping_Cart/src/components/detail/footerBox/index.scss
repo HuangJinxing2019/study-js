@@ -1,0 +1,33 @@
+.footer_box{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: .54rem;
+  padding: 0 .15rem;
+  box-sizing: border-box;
+  background: #fff;
+  .fa {
+    font-size: .24rem;
+    color: #ff6f00;
+    margin-right: .2rem;
+  }
+  .btn {
+    width: .9rem;
+    height: .36rem;
+    border-radius: .18rem;
+    text-align: center;
+    line-height: .36rem;
+    color: #fff;
+    margin-left: .1rem;
+    &.add_cart{
+      background: #f8ce02;
+    }
+    &.buy {
+      background: #f40;
+    }
+  }
+}

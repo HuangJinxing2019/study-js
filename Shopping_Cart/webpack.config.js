@@ -5,6 +5,8 @@ module.exports = {
   mode: "development",
   entry: {
     index: path.resolve(__dirname, "./src/js/index.js"),
+    detail: path.resolve(__dirname, "./src/js/detail.js"),
+    cart: path.resolve(__dirname, "./src/js/cart.js"),
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -87,13 +89,34 @@ module.exports = {
       extractComments: false,
     }),
     new HtmlWebpackPlugin({
-      // minify: {
-      //   collapseWhitespace: true, //去除回车和空格
-      //   removeComments: true, // 删除注释
-      // },
+      minify: {
+        collapseWhitespace: false, //去除回车和空格
+        removeComments: true, // 删除注释
+      },
       title: "商品列表",
       filename: "index.html",
-      template: path.resolve(__dirname, "src/index.html")
+      template: path.resolve(__dirname, "src/index.html"),
+      chunks: ['index'],
+    }),
+    new HtmlWebpackPlugin({
+      minify: {
+        collapseWhitespace: false, //去除回车和空格
+        removeComments: true, // 删除注释
+      },
+      title: "商品详情",
+      filename: "detail.html",
+      template: path.resolve(__dirname, "src/detail.html"),
+      chunks: ['detail'],
+    }),
+    new HtmlWebpackPlugin({
+      minify: {
+        collapseWhitespace: false, //去除回车和空格
+        removeComments: true, // 删除注释
+      },
+      title: "商品详情",
+      filename: "cart.html",
+      template: path.resolve(__dirname, "src/cart.html"),
+      chunks: ['cart'],
     }),
   ],
 };

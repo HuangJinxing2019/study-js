@@ -12,8 +12,12 @@ h4,
 h5 {
   font-weight: normal;
 }
+body{
+  font-size: .14rem;
+}
 .container{
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   font-size: .14rem;
@@ -21,4 +25,10 @@ h5 {
 }
 img {
   width: 100%;
+}
+button,
+input
+{
+  outline: none;
+  border: none;
 }
