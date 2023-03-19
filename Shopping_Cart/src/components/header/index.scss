@@ -11,8 +11,12 @@
     font-size: .16rem;
   }
   .edit {
+    display: none;
     position: absolute;
     right: .15rem;
     top: 0.01rem;
+    &.show{
+      display: block;
+    }
   }
 }
