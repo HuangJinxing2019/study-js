@@ -40,7 +40,7 @@ const App = (doc) => {
     // 监听头部的编辑点击事件
     domMap.oEdit.addEventListener('click', headerHandel, false);
     // 监听底部点击事件
-    domMap.oFooter.addEventListener('click', footerHandel, false);
+    domMap.oFooter && domMap.oFooter.addEventListener('click', footerHandel, false);
   }
 
   // 监听底部点击函数
