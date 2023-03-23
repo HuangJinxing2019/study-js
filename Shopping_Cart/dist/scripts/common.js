@@ -1,1 +1,0 @@
-document.documentElement.fontSize = document.documentElement.clientWidth / 3.75 + 'px';
