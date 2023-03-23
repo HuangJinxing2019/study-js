@@ -1,6 +1,7 @@
 import { createApp } from "../MVVM";
 import {useReactive} from "../MVVM/reactive";
 function App(){
+  // 创建响应式数据
   const state = useReactive({
     count: 0,
     a: {b: 1},
