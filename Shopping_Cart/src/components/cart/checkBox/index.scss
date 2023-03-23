@@ -1,0 +1,30 @@
+.check-box{
+  position: relative;
+  width: .2rem;
+  height: .2rem;
+  border-radius: 50%;
+
+  .check-input[type="checkbox"]{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    visibility: hidden;
+  }
+  .fa-check{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: .2rem;
+    height: .2rem;
+    border-radius: 50%;
+    background: #ccc;
+    text-align: center;
+    line-height: .2rem;
+    color: #fff;
+  }
+  .check-input[type="checkbox"]:checked + label{
+    background-color: #f40;
+  }
+
+}

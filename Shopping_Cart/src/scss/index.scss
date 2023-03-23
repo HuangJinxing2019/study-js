@@ -1,0 +1,9 @@
+@import url(./common.scss);
+.list_content{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: .44rem;
+  background-size: 100%;
+  overflow-y: auto;
+}

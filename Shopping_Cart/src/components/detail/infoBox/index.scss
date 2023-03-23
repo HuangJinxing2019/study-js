@@ -1,0 +1,23 @@
+.info_box{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: .44rem;
+  padding: 0 .15rem;
+  box-sizing: border-box;
+  background: #fff;
+  .sub {
+    &.price{
+      font-size: .16rem;
+      color: #f40;
+      font-weight: bold;
+    }
+    &.sale{
+      font-size: .12rem;
+      .highlinght{
+        color: #f40;
+      }
+    }
+  }
+}

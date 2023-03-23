@@ -1,0 +1,34 @@
+*{
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: #333;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: normal;
+}
+body{
+  font-size: .14rem;
+}
+.container{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-size: .14rem;
+  background: #efefef;
+}
+img {
+  width: 100%;
+}
+button,
+input
+{
+  outline: none;
+  border: none;
+}
