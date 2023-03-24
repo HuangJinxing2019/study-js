@@ -7,7 +7,7 @@ import TitleBox from '../components/detail/titleBox';
 import FooterBox from '../components/detail/footerBox';
 import Toast from '../components/showToast';
 import { queryGoodsDetail } from '../models'
-import cart from "../models/cartModel";
+  import cart from "../models/cartModel";
 
 const header = new Header();
 const imgShow = new ImgShow();
