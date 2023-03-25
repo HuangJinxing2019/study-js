@@ -88,8 +88,8 @@ var Vue = (function () {
             var macth = itemNode.textContent.match(data_reg);
             if(macth){
                 itemNode.textContent = itemNode.textContent.replace(data_reg, function (node, key){
-                    dataPool.set(itemNode, key)
-                    return vm[key]
+                    dataPool.set(itemNode, key.trim())
+                    return vm[key.trim()]
                 })
             }
         }
@@ -104,10 +104,14 @@ var Vue = (function () {
     }
 
     function updateComputed(vm, key, cb){
+        var _dep = null
         for(var k in computedData) {
-            if(computedData[k].dep.indexOf(key) !== -1){
-                vm[k] = computedData[k].get()
-                cb(k)
+            _dep = computedData[k];
+            for(var i = 0; i < _dep.length; i++){
+                if(_dep[i] === key){
+                    vm[k] = computedData[k].get()
+                    cb(k)
+                }
             }
         }
     }
