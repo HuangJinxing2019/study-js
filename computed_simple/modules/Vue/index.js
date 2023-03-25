@@ -19,13 +19,12 @@
 //     }
 // }
 
-import {render} from "../../../MVVM_SIMPLE/MVVM/render";
 
 var prop_reg = /this.(.+?)/g
 var data_reg = /\{\{(.+?)\}\}/g
 
 var Vue = (function () {
-    var computerData = {}
+    var computedData = {}
     var dataPool = new Map();
     function Vue (options){
         this.$el = document.querySelector(options.el)
@@ -41,13 +40,49 @@ var Vue = (function () {
         render(this, container)
     }
 
+    function useReactive(vm){
+        var _data = vm.$data;
+        for(var key in _data){
+            (function (key){
+                Object.defineProperty(vm, key, {
+                    get(){
+                        return _data[key]
+                    },
+                    set(value) {
+                        _data[key] = value
+                        update(vm, key)
+                        updateComputed(vm, key, function (_key){
+                            update(vm, _key)
+                        })
+                    }
+                })
+            })(key);
+        }
+    }
+
+    function initComputed(vm, computed){
+        _compilerComputed(vm, computed)
+        for (var key in computedData){
+            (function (key){
+                Object.defineProperty(vm, key, {
+                    get (){
+                        return computedData[key].value
+                    },
+                    set(value) {
+                        computedData[key].value = value
+                    }
+                })
+            })(key)
+        }
+    }
+
     function render(vm, container){
         compilerTemplate(vm, container)
         vm.$el.appendChild(container)
     }
     function compilerTemplate(vm, container){
         var allNodes = container.getElementsByTagName('*'),
-            itemNode = null;
+          itemNode = null;
         for (var i = 0; i < allNodes.length; i++){
             itemNode = allNodes[i]
             var macth = itemNode.textContent.match(data_reg);
@@ -69,45 +104,11 @@ var Vue = (function () {
     }
 
     function updateComputed(vm, key, cb){
-        for(var k in computerData) {
-            if(computerData[k].dep.indexOf(key) !== -1){
-                vm[k] = computerData[k].get()
-                cb(vm, k)
+        for(var k in computedData) {
+            if(computedData[k].dep.indexOf(key) !== -1){
+                vm[k] = computedData[k].get()
+                cb(k)
             }
-        }
-    }
-
-    function useReactive(vm){
-        var _data = vm.$data;
-        for(var key in _data){
-            (function (key){
-                Object.defineProperty(vm, key, {
-                    get(){
-                        return _data[key]
-                    },
-                    set(value) {
-                        _data[key] = value
-                        update(vm, key)
-                        updateComputed(vm, key, update)
-                    }
-                })
-            })(key);
-        }
-    }
-
-    function initComputed(vm, computed){
-        _compilerComputed(vm, computed)
-        for (var key in computerData){
-            (function (key){
-                Object.defineProperty(vm, key, {
-                    get (){
-                        return computerData[key].value
-                    },
-                    set(value) {
-                        computerData[key].value = value
-                    }
-                })
-            })(key)
         }
     }
 
@@ -115,11 +116,11 @@ var Vue = (function () {
         for (var key in computed){
             var descriptor = Object.getOwnPropertyDescriptor(computed, key);
             var descriptorFn = descriptor.value.get ? computed.value.get : descriptor.value;
-            computerData[key] = {};
-            computerData[key].value = descriptorFn.call(vm);
-            computerData[key].get = descriptorFn.bind(vm);
-            console.log( _collectDep(computerData[key].get))
-            computerData[key].dep = _collectDep(descriptorFn)
+            computedData[key] = {};
+            computedData[key].value = descriptorFn.call(vm);
+            computedData[key].get = descriptorFn.bind(vm);
+            console.log( _collectDep(computedData[key].get))
+            computedData[key].dep = _collectDep(descriptorFn)
         }
     }
 
