@@ -70,11 +70,9 @@ var Vue = (function () {
 
     function updateComputed(vm, key, cb){
         for(var k in computerData) {
-            console.log(computerData[k].dep)
-            console.log(key, k)
-            if(key === k){
-                vm[key] = computerData[key].get()
-                cb()
+            if(computerData[k].dep.indexOf(key) !== -1){
+                vm[k] = computerData[k].get()
+                cb(vm, k)
             }
         }
     }
@@ -90,9 +88,7 @@ var Vue = (function () {
                     set(value) {
                         _data[key] = value
                         update(vm, key)
-                        updateComputed(vm, key, function (){
-                            update(vm, key)
-                        })
+                        updateComputed(vm, key, update)
                     }
                 })
             })(key);
@@ -122,7 +118,8 @@ var Vue = (function () {
             computerData[key] = {};
             computerData[key].value = descriptorFn.call(vm);
             computerData[key].get = descriptorFn.bind(vm);
-            computerData[key].dep = _collectDep(computerData[key].get)
+            console.log( _collectDep(computerData[key].get))
+            computerData[key].dep = _collectDep(descriptorFn)
         }
     }
 
