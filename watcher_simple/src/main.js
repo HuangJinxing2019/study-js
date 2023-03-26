@@ -34,3 +34,5 @@ vm.a = 80
 console.log(vm.total)
 console.log(vm.total)
 console.log(vm.total)
+
+
