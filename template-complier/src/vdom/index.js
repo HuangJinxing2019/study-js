@@ -12,7 +12,6 @@ export function renderMixin(Vue){
     }
     Vue.prototype._s = function (value) {
         if(value === null) return
-        console.log(typeof value)
         return value
     }
     Vue.prototype._c = function (){
