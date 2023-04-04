@@ -337,20 +337,139 @@
     return root;
   }
 
+  const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g;
+  function generate(ast) {
+    const children = generateChildren(ast.children);
+    const code = `_c("${ast.tag}", ${formatAttrs(ast.attrs)}, ${children})`;
+    return code;
+  }
+
+  // 获取文本
+  function getTextNode(text) {
+    if (defaultTagRE.test(text)) {
+      let match,
+        index,
+        lastIndex = defaultTagRE.lastIndex = 0,
+        textArr = [];
+      while (match = defaultTagRE.exec(text)) {
+        index = match.index;
+        if (index > lastIndex) {
+          textArr.push(`"${text.substring(lastIndex, index)}"`);
+        }
+        textArr.push(`_s(${match[1].trim()})`);
+        lastIndex = index + match[0].length;
+      }
+      if (lastIndex < text.length) {
+        textArr.push(`"${text.substring(lastIndex)}"`);
+      }
+      return textArr.join('+');
+    } else {
+      return `"${text}"`;
+    }
+  }
+
+  // 获取节点子元素标签
+  function generateChildren(children) {
+    if (children && children.length > 0) {
+      const list = children.map(child => {
+        if (child.type === 1) {
+          child = generate(child);
+        } else if (child.type === 3) {
+          child = `_v(${getTextNode(child.text)})`;
+        }
+        return child;
+      });
+      return list.join(',');
+    }
+  }
+
+  // 格式化变迁属性->对象类型
+  function formatAttrs(attrs) {
+    let attrObj = {};
+    for (let item of attrs) {
+      // "width: 100px; background: green"
+      if (item.name === 'style') {
+        let styleObj = {};
+        const styleList = item.value.split(';').map(item => item.split(':'));
+        for (let [key, value] of styleList) {
+          styleObj[key] = value;
+        }
+        attrObj[item.name] = styleObj;
+      } else {
+        attrObj[item.name] = item.value;
+      }
+    }
+    return JSON.stringify(attrObj);
+  }
+
   function compilerToRenderFunction(html) {
-    const ast = parseHtmlToAst(html);
-    console.log(ast);
-    return ast;
+    const ast = parseHtmlToAst(html),
+      code = generate(ast),
+      render = new Function(`
+            with(this){ return ${code} }
+          `);
+    return render;
+  }
+
+  function patch(oldNode, vnode) {
+    let el = createElement(vnode),
+      parentElement = oldNode.parentElement;
+    parentElement.insertBefore(el, oldNode.nextSibling);
+    parentElement.removeChild(oldNode);
+  }
+  function createElement(vnode) {
+    const {
+      tag,
+      props,
+      children,
+      text
+    } = vnode;
+    if (typeof tag === 'string') {
+      vnode.el = document.createElement(tag);
+      updateProps(vnode);
+      children.map(child => {
+        vnode.el.appendChild(createElement(child));
+      });
+    } else {
+      vnode.el = document.createTextNode(text);
+    }
+    return vnode.el;
+  }
+  function updateProps(vnode) {
+    const el = vnode.el,
+      newProps = vnode.props || {};
+    for (let key in newProps) {
+      if (key === 'style') {
+        console.log(newProps.style);
+        for (let sKey in newProps.style) {
+          el.style[sKey] = newProps.style[sKey];
+        }
+      } else if (key === 'class') {
+        el.className = newProps[key];
+      } else {
+        el.setAttribute(key, newProps[key]);
+      }
+    }
+  }
+
+  function mountComponent(vm) {
+    vm._update(vm._render());
+  }
+  function lifeCycleMixin(Vue) {
+    Vue.prototype._update = function (vnode) {
+      const vm = this;
+      patch(vm.$el, vnode);
+    };
   }
 
   function initMixin(Vue) {
     Vue.prototype._init = function (options) {
       const vm = this;
       vm.$options = options;
+      initState(vm);
       if (vm.$options.el) {
         vm.$mount(vm.$options.el);
       }
-      initState(vm);
     };
     Vue.prototype.$mount = function (el) {
       const vm = this,
@@ -364,6 +483,42 @@
         const render = compilerToRenderFunction(template);
         options.render = render;
       }
+      mountComponent(vm);
+    };
+  }
+
+  function createElement$1(tag, attrs = {}, ...children) {
+    return vnode(tag, attrs, children);
+  }
+  function createTextVnode(text) {
+    return vnode(undefined, undefined, undefined, text);
+  }
+  function vnode(tag, props, children, text) {
+    return {
+      tag,
+      props,
+      children,
+      text
+    };
+  }
+
+  function renderMixin(Vue) {
+    Vue.prototype._render = function () {
+      const vm = this,
+        render = vm.$options.render,
+        vnode = render.call(vm);
+      return vnode;
+    };
+    Vue.prototype._v = function (text) {
+      return createTextVnode(text);
+    };
+    Vue.prototype._s = function (value) {
+      if (value === null) return;
+      console.log(typeof value);
+      return value;
+    };
+    Vue.prototype._c = function () {
+      return createElement$1(...arguments);
     };
   }
 
@@ -371,6 +526,8 @@
     this._init(options);
   }
   initMixin(Vue);
+  lifeCycleMixin(Vue);
+  renderMixin(Vue);
 
   return Vue;
 
