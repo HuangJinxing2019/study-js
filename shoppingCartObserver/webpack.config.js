@@ -3,11 +3,7 @@ const path = require("path"),
   TerserPlugin = require("terser-webpack-plugin");
 module.exports = {
   mode: "development",
-  entry: {
-    index: path.resolve(__dirname, "./src/js/index.js"),
-    detail: path.resolve(__dirname, "./src/js/detail.js"),
-    cart: path.resolve(__dirname, "./src/js/cart.js"),
-  },
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "js/[name]-[hash:6].js",
@@ -47,7 +43,11 @@ module.exports = {
               presets: [
                 "@babel/preset-env",
               ],
+              plugins: [
+                  ["@babel/plugin-proposal-decorators",{ "legacy": true }]
+              ]
             },
+
           },
         ],
       },
@@ -93,30 +93,9 @@ module.exports = {
         collapseWhitespace: false, //去除回车和空格
         removeComments: true, // 删除注释
       },
-      title: "商品列表",
-      filename: "index.html",
-      template: path.resolve(__dirname, "src/index.html"),
-      chunks: ['index'], // 对应入口对象（entry）的属性名称
-    }),
-    new HtmlWebpackPlugin({
-      minify: {
-        collapseWhitespace: false, //去除回车和空格
-        removeComments: true, // 删除注释
-      },
-      title: "商品详情",
-      filename: "detail.html",
-      template: path.resolve(__dirname, "src/detail.html"),
-      chunks: ['detail'], // 对应入口对象（entry）的属性名称
-    }),
-    new HtmlWebpackPlugin({
-      minify: {
-        collapseWhitespace: false, //去除回车和空格
-        removeComments: true, // 删除注释
-      },
       title: "购物车",
-      filename: "cart.html",
-      template: path.resolve(__dirname, "src/cart.html"),
-      chunks: ['cart'], // 对应入口对象（entry）的属性名称
+      filename: "index.html",
+      template: path.resolve(__dirname, "index.html"),
     }),
   ],
 };
