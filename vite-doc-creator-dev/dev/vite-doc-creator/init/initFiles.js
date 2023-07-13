@@ -18,7 +18,7 @@ function initFiles(options) {
     copyFiles('css')
     // 复制js文件
     copyFiles('js')
-    // 拷贝根目录html文件
+    // 创建根目录html文件
     createIndexHtml(options)
     // 复制html文件
     copyWelcome()

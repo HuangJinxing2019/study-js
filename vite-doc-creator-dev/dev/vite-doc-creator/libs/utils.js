@@ -14,6 +14,13 @@ function createMenuItem(filename, userDomain, userPort, isActive){
     `
 }
 
+function createIframe(filename, userDomain, userPort){
+    userPort = Number(userPort);
+    return `
+        <iframe src="${_formatBaseUrl(userDomain, userPort)}/src/html/${filename}" name="myFrame"></iframe>
+    `
+}
+
 // 替换模板字符串
 function replaceHtml(regexp, html, content){
     return html.replace(html.match(regexp)[1], content)
@@ -34,5 +41,6 @@ function _formatBaseUrl(userDomain, userPort){
 module.exports = {
     readFile,
     createMenuItem,
-    replaceHtml
+    replaceHtml,
+    createIframe
 }

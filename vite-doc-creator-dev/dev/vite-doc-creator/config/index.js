@@ -1,6 +1,8 @@
+const { createServer } = require('vite')
 const { resolve } = require('path');
 
-// 默认端口号
+// 默认端口号createServer
+
 const port = process.env.npm_config_port;
 
 // 默认域名
@@ -44,6 +46,12 @@ const innerDir = {
 const regexp = {
     // 匹配ul menu-list内部的内容
     reg_ulContent: /<ul class=\"menu-list\">([\s\S]*?)<\/ul>/,
+    // 匹配title中的内容
+    reg_titleContent: /<title>([\s\S]*?)<\/title>/,
+    // 匹配header-title中的内容
+    reg_headerTitleContent: /<h1 class=\"header-title\">([\s\S]*?)<\/h1>/,
+    // 匹配iframe page中的内容
+    reg_iframePageContent: /<div class=\"iframe-page\">([\s\S]*?)<\/div>/
 }
 
 module.exports = {

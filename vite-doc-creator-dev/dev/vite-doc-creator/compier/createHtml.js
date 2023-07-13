@@ -1,6 +1,7 @@
 const { readdirSync, copyFileSyn, writeFileSync } = require('fs')
 const { readFile, replaceHtml } = require('../libs/utils')
 const {
+    title,
     outPath: {
         htmlPath,
         rootPath,
@@ -10,9 +11,12 @@ const {
     },
     regexp:{
         reg_ulContent,
+        reg_titleContent,
+        reg_headerTitleContent,
+        reg_iframePageContent
     }
 } = require('../config')
-const { createMenuItem } = require('../libs/utils')
+const { createMenuItem, createIframe } = require('../libs/utils')
 // 创建index.html
 function createIndexHtml(options){
     const { domain, port } = options
@@ -33,7 +37,15 @@ function createIndexHtml(options){
     _htmlFiles.map(function (filename, index){
         _menuList += createMenuItem(filename, domain, port, !index)
     })
-    const newHtml = replaceHtml(reg_ulContent, _indexHtmlStr, _menuList)
+
+    // 替换ul中的内容
+    let newHtml = replaceHtml(reg_ulContent, _indexHtmlStr, _menuList);
+    // 替换title中的内容
+    newHtml = replaceHtml(reg_titleContent, newHtml, options.title || title)
+    // 替换header-title中的内容
+    newHtml = replaceHtml(reg_headerTitleContent, newHtml, options.title || title)
+    // 替换iframe page中的内容
+    newHtml = replaceHtml(reg_iframePageContent, newHtml, createIframe(_htmlFiles[0], domain, port))
     console.log(newHtml)
     // 写入文件
     writeFileSync(rootPath + '/index.html', newHtml)
