@@ -18,7 +18,7 @@ const {
 } = require('../config')
 const { createMenuItem, createIframe } = require('../libs/utils')
 // 创建index.html
-function createIndexHtml(options){
+function createIndexHtml(options, outerFilename){
     const { domain, port } = options
     const _htmlFiles = readdirSync(htmlPath)
 
@@ -32,10 +32,11 @@ function createIndexHtml(options){
 
     // 读取模板文件index.html
     const _indexHtmlStr = readFile(htmlDir + '/index.html')
-    let _menuList = ''
+    let _menuList = '',
+        curIndex = outerFilename ? _htmlFiles.indexOf(outerFilename) : 0;
     // 遍历外层html文件夹下的所有文件，并组合成menuList
     _htmlFiles.map(function (filename, index){
-        _menuList += createMenuItem(filename, domain, port, !index)
+        _menuList += createMenuItem(filename, domain, port, curIndex === index)
     })
 
     // 替换ul中的内容
@@ -45,8 +46,7 @@ function createIndexHtml(options){
     // 替换header-title中的内容
     newHtml = replaceHtml(reg_headerTitleContent, newHtml, options.title || title)
     // 替换iframe page中的内容
-    newHtml = replaceHtml(reg_iframePageContent, newHtml, createIframe(_htmlFiles[0], domain, port))
-    console.log(newHtml)
+    newHtml = replaceHtml(reg_iframePageContent, newHtml, createIframe(_htmlFiles[curIndex], domain, port))
     // 写入文件
     writeFileSync(rootPath + '/index.html', newHtml)
 }
