@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+      .box{
+        position: absolute;
+        left: 0;
+        top: 200px;
+        width: 100px;
+        height: 100px;
+        background: red;
+      }
+      .target{
+        position: absolute;
+        left: 500px;
+        top: 200px;
+        width: 1px;
+        height: 100px;
+        background: green;
+      }
+    </style>
+</head>
+<body>
+  <h1>弹性运动2 通过步长来实现</h1>
+  <button class="btn">开始运动</button>
+  <div class="box"></div>
+  <div class="target"></div>
+  <script type="text/javascript">
+    const box = document.getElementsByClassName('box')[0],
+            oBtn = document.getElementsByClassName('btn')[0];
+    oBtn.onclick = function (){
+      elasticMove({
+        dom: box,
+        target: 500,
+        attr: 'left',
+      })
+    }
+
+    /**
+     * 弹性运动函数
+     * @param option
+     * option.dom 运动的元素
+     * option.target 运动到的指定目标位置
+     * option.attr 运动方向，left right top bottom
+     * option.k 弹性指数，弹力的大小, 弹力越大，弹出的目标距离越远
+     * option.z 运动的摩擦力
+     */
+    function elasticMove(option){
+      let { dom, target, attr, k, z } = Object.assign({ z: 0.8, k: 0.5 }, option)
+
+      // 判断定时器是否已存在
+      if(!dom.timer){
+        dom.timer = {}
+      } else {
+          clearInterval(dom.timer[attr])
+      }
+      // 获取当前位置
+      let step = 0; // 元素的位置
+      dom.timer[attr] = setInterval(() => {
+        // 元素当前位置
+        let cur = parseInt(getStyles(dom, attr));
+        //距离目标位置的记录
+        let len = target - cur;
+        step += len * k;
+        step = step * z;
+        dom.style[attr] = cur + step + 'px';
+        if (Math.round(step) === 0 && Math.round(len) === 0){
+            dom.style[attr] = target + 'px';
+            clearInterval(dom.timer[attr])
+            dom.timer[attr] = null
+        }
+
+      }, 50)
+    }
+
+
+    function isObject(origin){
+      return typeof origin === 'object' && origin !== null;
+    }
+
+    function getStyles(elem, prop){
+      if(window.getComputedStyle){
+        if(prop){
+          return window.getComputedStyle(elem, null)[prop]
+        } else {
+          return window.getComputedStyle(elem, null)
+        }
+      } else {
+        if(prop){
+          return elem.currentStyle[prop]
+        } else {
+          return elem.currentStyle
+        }
+      }
+    }
+  </script>
+</body>
+</html>

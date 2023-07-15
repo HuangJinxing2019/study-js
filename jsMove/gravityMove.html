@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+      *{
+        margin: 0;
+        padding: 0;
+      }
+      body{
+        overflow: hidden;
+      }
+      .btn{
+        margin:20px;
+      }
+      .ball{
+        position: absolute;
+        top: 300px;
+        width: 50px;
+        height: 50px;
+        background-color: red;
+        border-radius: 50%;
+      }
+      .ball:nth-child(1){
+        left: 0;
+      }
+      .ball:nth-child(2){
+        left: 50px;
+      }
+      .ball:nth-child(3){
+        left: 100px;
+      }
+      .ball:nth-child(4){
+        left: 150px;
+      }
+      .ball:nth-child(5){
+        left: 200px;
+      }
+    </style>
+</head>
+<body>
+  <h1>重力运动</h1>
+  <button class="btn">开始下落</button>
+  <div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+  </div>
+
+  <script type="text/javascript">
+    const oBall = document.getElementsByClassName('ball')
+          oBtn = document.getElementsByClassName('btn')[0];
+    oBtn.onclick = function (){
+      // 每个1秒钟掉落一个球
+      [...oBall].map((oItem, index) => {
+        let t = setTimeout(() => {
+          gravityMove({
+            dom: oItem,
+          })
+          clearTimeout(t)
+          t = null
+        }, index * 1000)
+      })
+    }
+
+    /**
+     * 重力落下运动
+     * @param option
+     * option.dom 运动元素
+     * option.y 重力加速都
+     * option.k 落地弹力系数
+     */
+    function gravityMove(option){
+      let { dom, y, k, activeH, activeW } = Object.assign({ y: 5, k: .9 }, option);
+      // 运动高度
+      activeH = activeH || getViewportSize().height;
+      activeW = activeW || getViewportSize().width;
+      // 元素高度
+      const domH = parseInt(getStyles(dom, 'height')),
+            domW = parseInt(getStyles(dom, 'width'));
+      // 每一次落下的高度
+      let stepY = 0,
+      // 水平匀速运动
+          stepX = 10,
+      //   底部碰撞次数
+            i = 0;
+      clearInterval(dom.timer)
+      dom.timer = setInterval(function (){
+        stepY += y;
+        // 当前元素距离顶部距离
+        let curY = parseInt(getStyles(dom, 'top')),
+            curX = parseInt(getStyles(dom, 'left')),
+        // 下一运动的高度 = 当前高度 + 运动距离
+            top = curY + stepY,
+            left = curX + stepX;
+        // ================================落下运动=====================================================
+        if((top + domH) > activeH){
+          top = activeH - domH;
+        }
+        // 当运动到达底部计算计算回弹，重力累加速度乘以k值，就是回弹的高度
+        if((top + domH) === activeH){
+          i++;
+          stepY = -stepY * k
+          if(Math.ceil(stepY) === 0){
+            clearInterval(dom.timer)
+            dom.timer = null
+          }
+        }
+        dom.style.top = top + 'px'
+
+        // ================================水平运动=====================================================
+        if(left + domW > activeW){
+          left = activeW - domW
+        }
+
+        if(left + domW === activeW){
+          stepX = -stepX
+        }
+
+        dom.style.left = left + 'px'
+
+
+      }, 20)
+    }
+
+
+
+
+    function getStyles(elem, prop){
+      if(window.getComputedStyle){
+        if(prop){
+          return window.getComputedStyle(elem, null)[prop]
+        } else {
+          return window.getComputedStyle(elem, null)
+        }
+      } else {
+        if(prop){
+          return elem.currentStyle[prop]
+        } else {
+          return elem.currentStyle
+        }
+      }
+    }
+
+    function getViewportSize(){
+      if(window.innerWidth){
+        return{
+          width: window.innerWidth,
+          height: window.innerHeight,
+        }
+      }else{
+        //判断是否为怪异模式
+        if(document.compatMode === 'BackCompat'){
+          return {
+            width: document.body.clientWidth,
+            height: document.body.clientHeight,
+          }
+        }else{
+          return {
+            width: document.documentElement.clientWidth,
+            height: document.documentElement.clientHeight,
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+      #nav{
+        position: relative;
+        width: 600px;
+        height: 30px;
+      }
+      #nav a{
+        float: left;
+        display: block;
+        width: 120px;
+        height: 30px;
+        line-height: 30px;
+        background-color: #678;
+        color: #fff;
+        border-right: 1px solid #fff;
+        box-sizing: border-box;
+        text-align: center;
+        text-decoration: none;
+      }
+      #navActive{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 119px;
+        height: 30px;
+        background-color: rgba(0, 0, 0, .5);
+      }
+    </style>
+</head>
+<body>
+  <div id="nav">
+    <a href="javascript:" class="navItem">tab1</a>
+    <a href="javascript:" class="navItem">tab2</a>
+    <a href="javascript:" class="navItem">tab3</a>
+    <a href="javascript:" class="navItem">tab4</a>
+    <a href="javascript:" class="navItem">tab5</a>
+    <div id="navActive"></div>
+  </div>
+  <script type="text/javascript">
+    const oNav = document.getElementById('nav'),
+          oNavActive = document.getElementById('navActive');
+          oNavItem = document.getElementsByClassName('navItem');
+
+    init()
+    function init(){
+      bindEvent()
+    }
+
+    function bindEvent(){
+      oNav.addEventListener('click', handleNav, false)
+    }
+    function handleNav (e) {
+      let ev = e || window.event,
+          target = ev.target,
+          tarName = target.tagName.toLocaleLowerCase();
+      if(tarName === 'a'){
+        elasticMove({
+          dom: oNavActive,
+          target: [].indexOf.call([...oNavItem], target) * 120,
+          attr: 'left',
+          k: .9,
+          z: .6
+        })
+      }
+    }
+
+    /**
+     * 弹性运动函数
+     * @param option
+     * option.dom 运动的元素
+     * option.target 运动到的指定目标位置
+     * option.attr 运动方向，left right top bottom
+     * option.k 弹性指数，弹力的大小, 弹力越大，弹出的目标距离越远
+     * option.z 运动的摩擦力
+     */
+    function elasticMove(option){
+      console.log(option)
+      let { dom, target, attr, k, z } = Object.assign({ z: 0.8, k: 0.5 }, option)
+
+      // 判断定时器是否已存在
+      if(!dom.timer){
+        dom.timer = {}
+      } else {
+        clearInterval(dom.timer[attr])
+      }
+      // 获取当前位置
+      let step = 0; // 元素的位置
+      dom.timer[attr] = setInterval(() => {
+        // 元素当前位置
+        let cur = parseInt(getStyles(dom, attr));
+        //距离目标位置的记录
+        let len = target - cur;
+        step += len * k;
+        step = step * z;
+        dom.style[attr] = cur + step + 'px';
+        if (Math.round(step) === 0 && Math.round(len) === 0){
+          dom.style[attr] = target + 'px';
+          clearInterval(dom.timer[attr])
+          dom.timer[attr] = null
+        }
+
+      }, 30)
+    }
+
+
+    function isObject(origin){
+      return typeof origin === 'object' && origin !== null;
+    }
+
+    function getStyles(elem, prop){
+      if(window.getComputedStyle){
+        if(prop){
+          return window.getComputedStyle(elem, null)[prop]
+        } else {
+          return window.getComputedStyle(elem, null)
+        }
+      } else {
+        if(prop){
+          return elem.currentStyle[prop]
+        } else {
+          return elem.currentStyle
+        }
+      }
+    }
+  </script>
+</body>
+</html>

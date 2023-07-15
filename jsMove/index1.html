@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    div{
+        width: 100px;
+        height: 100px;
+        background: red;
+        margin-top: 50px;
+    }
+</style>
+<body>
+    <div class="box1"></div>
+    <div class="box2"></div>
+    <script type="text/javascript">
+        const box1 = document.getElementsByClassName('box1')[0],
+            box2 = document.getElementsByClassName('box2')[0];
+        box1.addEventListener('mouseenter', function (){
+            startMove(this, {width: 500, opacity: 0.2}, function (){
+                startMove(box2, {width: 600, opacity: 0.3})
+            })
+        }, false)
+        /**
+         * js运动封装方法
+         * @param dom 运动的元素
+         * @param attrObj 需要改变的属性集合，{ width: 400, height: 400, border: 20, opacity: .5 }
+         * @param callback 运动结束后的回调函数
+         */
+        function startMove(dom, attrObj, callback){
+            if(!dom instanceof HTMLElement) throw new Error('dom不是一个元素对象');
+            if(!isObject(attrObj)) throw new Error('attrObj不是一个对象');
+
+            clearInterval(dom.timer);
+            // 通过定时器执行来达到运动效果
+            dom.timer = setInterval(() => {
+                // 获取属性keys
+                const keys = Object.keys(attrObj);
+                let allStop = true;
+                // 遍历属性改变属性值
+                keys.forEach(key => {
+                    // 获取元素移动的大小，从快到慢
+                    // 元素的属性最终值 - 当前元素的属性当前值 = 还要移动的距离
+                    // 还要移动的距离 / 7 = 这次移动的值
+                    // 得到这次移动的值后，判断值是正数还是负数，正数向上取整，负数向下取整
+                    // 取整原因是应为可能存在不尽，无限接近，达不到目标值
+                    // 如果是透明度opacity属性的值是0~1,需要做单独处理
+                    let curValue,
+                        iSpeed;
+                    if(key === 'opacity'){
+                        curValue = parseFloat(getStyles(dom, key));
+                        iSpeed = (attrObj[key] - curValue) / 7 * 100;
+                        iSpeed > 0 ? (iSpeed = Math.ceil(iSpeed)) : (iSpeed = Math.floor(iSpeed))
+                        dom.style[key] = curValue + iSpeed / 100
+                    } else {
+                        curValue = parseInt(getStyles(dom, key));
+                        iSpeed = (attrObj[key] - curValue) / 7;
+                        iSpeed > 0 ? (iSpeed = Math.ceil(iSpeed)) : (iSpeed = Math.floor(iSpeed))
+                        dom.style[key] = curValue + iSpeed + 'px'
+                    }
+                    // 只要有一个还没有完成 allStop 就设置为false
+                    if(iSpeed !== 0) allStop = false
+                })
+                // 如果全部完成了就关闭定时器, 执行回调函数
+                if(allStop){
+                    clearInterval(dom.timer)
+                    typeof callback === 'function' && callback()
+                }
+            }, 30)
+        }
+        function isObject(origin){
+            return typeof origin === 'object' && origin !== null;
+        }
+
+        function getStyles(elem, prop){
+            if(window.getComputedStyle){
+                if(prop){
+                    return window.getComputedStyle(elem, null)[prop]
+                } else {
+                    return window.getComputedStyle(elem, null)
+                }
+            } else {
+              if(prop){
+                  return elem.currentStyle[prop]
+              } else {
+                  return elem.currentStyle
+              }
+            }
+        }
+    </script>
+</body>
+</html>
