@@ -70,6 +70,8 @@
      * 重力落下运动
      * @param option
      * option.dom 运动元素
+     * option.activeH 运动高度
+     * option.activeW 运动宽度
      * option.y 重力加速都
      * option.k 落地弹力系数
      */
@@ -87,7 +89,7 @@
           stepX = 10,
       //   底部碰撞次数
             i = 0;
-      clearInterval(dom.timer)
+      if(dom.timer) return
       dom.timer = setInterval(function (){
         stepY += y;
         // 当前元素距离顶部距离

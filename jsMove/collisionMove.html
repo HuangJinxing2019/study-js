@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .block {
+            position: absolute;
+            left: 0;
+            top: 300px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>拖拽投掷和碰撞检测</h1>
+<button class="btn">开始运动</button>
+<div class="block"></div>
+<script type="text/javascript">
+    const oDiv = document.getElementsByClassName('block')[0],
+        oBtn = document.getElementsByClassName('btn')[0];
+    init();
+
+    function init() {
+        bindEvent();
+        elemDrag(oDiv);
+    }
+
+    function bindEvent() {
+        oBtn.addEventListener('click', function () {
+            collisionMove({dom: oDiv});
+        }, false)
+    }
+
+    /**
+     * 重力落下运动
+     * @param options
+     * options.dom 运动元素
+     * options.activeH 运动高度
+     * options.activeW 运动宽度
+     * options.stepX X轴步长
+     * options.stepY Y轴步长
+     */
+    function collisionMove(options) {
+        console.log(options)
+        let dom = options.dom,
+            activeH = options.activeH || getViewportSize().height,
+            activeW = options.activeW || getViewportSize().width,
+            stepX = isNaN(options.stepX) ? 5 : options.stepX,
+            stepY = isNaN(options.stepY) ? 5 : options.stepY,
+            domW = parseInt(getStyles(dom, 'width')),
+            domH = parseInt(getStyles(dom, 'height'));
+
+        console.log(stepX, stepY)
+        if (dom.timer) return
+
+        dom.timer = setInterval(() => {
+            // 当前运动元素宽高
+            const curY = parseInt(getStyles(dom, 'top')),
+                curX = parseInt(getStyles(dom, 'left'));
+
+            // 元素在Y轴上移动的位置
+            let top = curY + stepY
+            if (top + domH > activeH) {
+                top = activeH - domH
+            } else if (top < 0) {
+                top = 0
+            }
+            // 元素移动到Y轴（上下）边界是，stepY取反，让元素反向运动
+            if ((top + domH === activeH) || (top === 0)) {
+                stepY = -stepY
+            }
+
+            // 元素在X轴上的移动位置
+            let left = curX + stepX
+            if (left + domW > activeW) {
+                left = activeW - domW
+            } else if (left < 0) {
+                left = 0
+            }
+            // 元素移动到X轴（左右）边界是，stepX取反，让元素反向运动
+            if ((left + domW === activeW) || (left === 0)) {
+                stepX = -stepX
+            }
+
+            dom.style.left = left + 'px'
+            dom.style.top = top + 'px'
+
+        }, 20)
+    }
+
+
+    // ################################################################################################################
+
+    // 元素拖动函数
+    function elemDrag(elem) {
+        var x,
+            y,
+            wWidth = getViewportSize().width, //获取浏览器宽度
+            wHeight = getViewportSize().height, //获取浏览器高度
+            eleWidth =  parseInt(getStyles(elem, 'width')), //获取元素宽度
+            eleHeight = parseInt(getStyles(elem, 'height')), //获取元素高度
+            //上一次元素位置
+            lastY = 0,
+            lastX = 0,
+            // 鼠标松开后的移动步长
+            stepY = 0,
+            stepX = 0;
+        addEvent(elem, 'mousedown', function (e) {
+            clearInterval(elem.timer);
+            elem.timer = null;
+            var e = e || window.event;
+
+            //获取鼠标在元素的位置
+            x = pagePos(e).X - parseInt(getStyles(elem, 'left'));
+            y = pagePos(e).Y - parseInt(getStyles(elem, 'top'));
+
+            addEvent(document, 'mousemove', mouseMove);
+            addEvent(document, 'mouseup', mouseUp);
+            cancelBubble(e);
+            preventDefaultEvent(e)
+        })
+
+        function mouseMove(e) {
+            var e = e || window.event,
+                eleLeft = pagePos(e).X - x,
+                eleTop = pagePos(e).Y - y;
+            //判断元素移动是否超出浏览器窗口。
+            if (eleLeft <= 0) {
+                eleLeft = 0;
+            } else if (eleLeft >= wWidth - eleWidth) {
+                eleLeft = wWidth - eleWidth - 1
+            }
+            if (eleTop <= 0) {
+                eleTop = 0
+            } else if (eleTop >= wHeight - eleHeight) {
+                eleTop = wHeight - eleHeight - 1
+            }
+            stepX = eleLeft - lastX;
+            stepY = eleTop - lastY;
+            // 设置元素的位置
+            elem.style.left = eleLeft + 'px';
+            elem.style.top = eleTop + 'px';
+            lastX = eleLeft;
+            lastY = eleTop;
+        }
+
+        function mouseUp(e) {
+            var e = e || window.event;
+            removeEvent(document, 'mousemove', mouseMove)
+            removeEvent(document, 'mouseup', mouseUp)
+            collisionMove({
+                dom: elem,
+                stepY: stepY,
+                stepX: stepX
+            })
+        }
+    }
+
+
+    //添加事件监听
+    function addEvent(el, type, fn){
+        if(el.addEventListener){
+            el.addEventListener(type, fn, false);
+        }else if(el.attachEvent){
+            el.attachEvent('on' + type, function(){
+                //这里this默认指向window，call(el)改变this指向el
+                fn.call(el)
+            })
+        }else{
+            el['on' + type] = fn
+        }
+    }
+
+    //取消事件监听
+    function removeEvent(elem, type, fn){
+        if(elem.addEventListener){
+            elem.removeEventListener(type, fn, false);
+        }else if(elem.attachEvent){
+            elem.detachEvent('on' + type, fn);
+        }else{
+            elem['on' + 'type'] = null;
+        }
+    }
+
+    //取消默认事件
+    function preventDefaultEvent(e){
+        var e = e || window.event;
+        if(e.preventDefault){
+            e.preventDefault();
+        }else{
+            e.returnValue = false;
+        }
+    }
+
+
+    // 获取元素在页面的位置
+    function pagePos(e){
+        var sLeft = getScrollOffSet().left,
+            sTop = getScrollOffSet().top,
+            // IE8 可能会存在文档偏移
+            cLeft = document.documentElement.clientLeft || 0,
+            cTop = document.documentElement.clientTop || 0;
+        return {
+            X: e.clientX + sLeft - cLeft,
+            Y: e.clientY + sTop -cTop
+        }
+    }
+
+    // 获取滚动条位置
+    function getScrollOffSet(){
+        if(window.pageXOffset){
+            return{
+                left: window.pageXOffset,
+                top: window.pageYOffset,
+            }
+        }else{
+            return{
+                left: document.body.scrollLeft + document.documentElement.scrollLeft,
+                top: document.body.scrollTop + document.documentElement.scrollTop,
+            }
+        }
+    }
+    //取消冒泡
+    function cancelBubble(e){
+        var e = e || window.event;
+        if(e.stopPropagation){
+            e.stopPropagation();
+        }else{
+            e.cancelBubble = true;
+        }
+    }
+
+    function getStyles(elem, prop) {
+        if (window.getComputedStyle) {
+            if (prop) {
+                return window.getComputedStyle(elem, null)[prop]
+            } else {
+                return window.getComputedStyle(elem, null)
+            }
+        } else {
+            if (prop) {
+                return elem.currentStyle[prop]
+            } else {
+                return elem.currentStyle
+            }
+        }
+    }
+
+    function getViewportSize() {
+        if (window.innerWidth) {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            }
+        } else {
+            //判断是否为怪异模式
+            if (document.compatMode === 'BackCompat') {
+                return {
+                    width: document.body.clientWidth,
+                    height: document.body.clientHeight,
+                }
+            } else {
+                return {
+                    width: document.documentElement.clientWidth,
+                    height: document.documentElement.clientHeight,
+                }
+            }
+        }
+    }
+</script>
+</body>
+</html>
