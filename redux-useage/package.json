@@ -1,0 +1,19 @@
+{
+  "name": "redux-useage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^4.5.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "redux": "^4.2.1"
+  }
+}
