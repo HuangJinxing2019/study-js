@@ -1,29 +1,29 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
-import { createPinia } from './pinia';
-// import { createPinia } from 'pinia';
+// import { createPinia } from "pinia";
+import { createPinia } from '@/pinia'
 
 const pinia = createPinia();
+console.log(pinia)
 
-console.log(pinia);
+pinia.use(function ({ store }){
+    console.log('=================')
+    const localState = localStorage.getItem('PINIA_STATE_' + store.$id)
+    localState && (store.$state = JSON.parse(localState));
+    store.$subscribe(({ storeId }, state) => {
+        localStorage.setItem('PINIA_STATE_' + storeId, JSON.stringify(state))
+    })
 
-/**
- * pinia {
- *   install,
- *   .....
- * }
- * 
- * use({
- *   install
- * })
- * 
- * use() => { install } => install()
- */
+    // 监听每个函数执行
+    store.$onAction(({ after, onError }) => {
+        after(() => {
+
+        })
+        onError(() => {
+
+        })
+    })
+})
 
 createApp(App).use(pinia).mount('#app')
-
-/**
- * createPinia(): 创建一个统一管理用户定义的store的容器 => pinia
- * defineStore(): 帮助你创建拥有state getters actions的store生成器
- */
